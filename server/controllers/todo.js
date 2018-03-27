@@ -1,5 +1,6 @@
 const todo = require('../models/todo')
 const jwt = require('jsonwebtoken');
+const moment = require('moment')
 
 
 module.exports = {
@@ -31,7 +32,7 @@ module.exports = {
     let decoded = jwt.verify(token, process.env.SECRET)
     todo.find({owner : decoded._id})
     // .populate('owner')
-    .sort({date: 'desc'})
+    // .sort({status: 'asc'})
     .exec((err,data_todo) => {
       if(err){
         res.status(404).json({
@@ -55,6 +56,8 @@ module.exports = {
     })
   },
   updateTodo: function (req, res) {
+    console.log(req.body, 'ini REQ BODY')
+    
     todo.findOneAndUpdate({ _id: req.headers.id }, { $set: req.body }, {new: true}, (err, data) => {
       console.log(data); 
       if(err) {
@@ -73,15 +76,15 @@ module.exports = {
   searchTodo: function (req,res) {
     todo.findOne({
       $or: [
-        {title: req.body.tile},
+        {title: req.body.title},
         {description: req.body.description},
         {date: req.body.date}
       ]
-    }).then(todo => {
-      if(todo){
+    }).then((err,task) => {
+      if(task){
         res.status(201).json({
           message: 'here \'s your data',
-          data: todo
+          data: task
         })
       }
     })

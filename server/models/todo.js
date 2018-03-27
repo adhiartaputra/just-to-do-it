@@ -1,5 +1,6 @@
 const mongoose   = require('mongoose')
 const Schema     = mongoose.Schema
+const moment = require('moment')
 
 const listSchema = new Schema ({
     owner        : {
@@ -15,12 +16,12 @@ const listSchema = new Schema ({
         default     : "undescribed task" 
     },
     date        : {
-        type        : Date,
-        default     : Date.now()
+        type        : String,
+        default     : moment(Date.now()).format('LL')
     },
     status      : {
-        type: Boolean,
-        default: false
+        type: Number,
+        default: 0
     }
     // image       : String      
 })

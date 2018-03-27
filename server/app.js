@@ -6,16 +6,20 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const axios = require('axios')
 const cors = require('cors')
+const moment = require('moment')
 require('dotenv').config()
 
 const login = require('./routes/login');
 const users = require('./routes/users');
 const todos = require('./routes/todos');
+const pass = process.env.PASSWORD
+const dbURL = `mongodb://just-to-do-it:${pass}@just-to-do-it-shard-00-00-grhoo.mongodb.net:27017,just-to-do-it-shard-00-01-grhoo.mongodb.net:27017,just-to-do-it-shard-00-02-grhoo.mongodb.net:27017/todolist?ssl=true&replicaSet=just-to-do-it-shard-0&authSource=admin`
 
 const app = express();
 
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/todo', (err => {
+const db = mongoose.connection
+mongoose.connect(dbURL, (err => {
   if(err) {
     console.log('failed to connect to database');
   } else {

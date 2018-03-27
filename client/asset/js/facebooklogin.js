@@ -3,7 +3,6 @@ function statusChangeCallback(response) {
   console.log(response);
   if (response.status === 'connected') {
       localStorage.setItem('facebookId', response.authResponse.userID)
-      // window.location.href = 'index.html';
 
   testAPI(response)
   } else {
@@ -14,6 +13,12 @@ function checkLoginState() {
   FB.getLoginStatus(function(response) {
   statusChangeCallback(response);
   });
+}
+function logout () {
+  window.FB.logout(function (response) {
+    localStorage.clear()
+    window.location = 'login.html'
+  })
 }
 
 window.fbAsyncInit = function() {
@@ -49,21 +54,15 @@ function testAPI(token) {
           imgUrl: response.picture.data.url,
           name: response.name
       })
-      .then(function (response_login) {
-        // console.log(response_login,'<<<<<<<');
-        console.log(response_login,'<<<<<<<<<< ');
-        if(response_login.status === 200 && window.location.pathname === '/login.html') {
-          localStorage.setItem('token', response_login.data.token);
-          console.log('done - ' + localStorage.getItem('token'));
-          window.location = 'index.html'
-        }
-        
-      })
-      .catch(function (error) {
-
-      });
-
-
+        .then(function (response_login) {
+          // console.log(response_login,'<<<<<<<');
+          console.log(response_login,'<<<<<<<<<< ');
+          if(response_login.status === 200 && window.location.pathname === '/login.html') {
+            localStorage.setItem('token', response_login.data.token);
+            console.log('done - ' + localStorage.getItem('token'));
+            window.location = 'index.html'
+          }        
+        })
   // document.getElementById('status').innerHTML =
   //     'Thanks for logging in, ' + response.name + '!';
   });

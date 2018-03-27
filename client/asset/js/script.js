@@ -2,20 +2,23 @@ if(!localStorage.token) {
   window.location = 'login.html'
 }
 
-new Vue ({
+let app = new Vue ({
   el: '#app-vue',
   data: {
       tasks: [],
       title : null,
       description : null,
-      status  : false,
-      date    : new Date(),
+      status  : 0,
+      date    : (new Date()).toLocaleDateString('id-ID'),
       dataLS: localStorage.getItem('facebookId'),
       dataJWT: localStorage.getItem('token'),
-      token: localStorage.getItem('token')
+      token: localStorage.getItem('token'),
+      quoteAuthor: '',
+      quoteContent: ''
   },
   created: function() {
     this.showTask()
+    this.getQuote()
   },
   methods: {
       getToken: function () {
@@ -64,7 +67,7 @@ new Vue ({
           })
       },
       statusDone: function (task) {
-        this.status = true        
+        this.status = 1
         axios({
           method  : 'put',
           url     : 'http://localhost:3000/todos',
@@ -82,17 +85,14 @@ new Vue ({
         })
       },
       editTask: function (task) {
-        axios({
-          method  : 'put',
-          url     : 'http://localhost:3000/todos',
-          headers : {
+        axios.put('http://localhost:3000/todos/', {
+          title: this.title,
+          description: this.description,
+          date: this.date
+        }, {
+          headers: { 
             token: this.token,
             id: task._id
-          },
-          data: {
-            title: this.title,
-            description: this.description,
-            date: this.date
           }
         })
         .then(data=> {
@@ -100,11 +100,16 @@ new Vue ({
           this.showTask()
         })
       },
-      logout: function () {
-        window.location = 'login.html'
-        localStorage.removeItem('token')
-        localStorage.removeItem('facebookId')
-        localStorage.removeItem('name')
+      getQuote: function () {
+        axios({
+          method: 'get',
+          url   : 'http://quotes.rest/qod'
+        })
+        .then(({data}) => {
+          console.log(data);
+          this.quoteAuthor = data.contents.quotes[0].author,
+          this.quoteContent = data.contents.quotes[0].quote
+        })
       }
   }
 })
